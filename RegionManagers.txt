@@ -1,0 +1,10 @@
+Region,Manager
+United States,Eric
+United States,Sarah
+United States,Raj
+United Kingdom,Fred
+Australia,Paul
+Brazil,Simon
+Germany,Fred
+France,James
+Canada,James

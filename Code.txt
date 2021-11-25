@@ -1,0 +1,35 @@
+FullName = [FirstName] & " " & IF(ISBLANK([MiddleName]),"",[MiddleName] & " ") & 
+	[LastName] & IF(ISBLANK([Title]),""," (" & [Title] & ")")
+
+CostAmount = RELATED('Product'[StandardCost]) * [OrderQuantity]
+
+Reseller Sales = SUMX(RELATEDTABLE('Reseller Sales'),[SalesAmount])
+
+Reseller Group = SWITCH(TRUE(),ISBLANK([Reseller Sales]),"4-No Sales",	
+	[Reseller Sales]>400000,"1-Premium",
+	[Reseller Sales]>100000,"2-High",
+	"3-Low")
+
+Web Sales Amount = SUM([SalesAmount])
+Web Quantity = SUM([OrderQuantity])
+Web Cost Amount = SUM([CostAmount])
+Web Average Sale = DIVIDE([Web Sales Amount],[Web Quantity],0)
+Web Margin = [Web Sales Amount]-[Web Cost Amount]
+
+Web Sales YTD = IF(ISBLANK([Web Sales Amount]),BLANK(),
+	TOTALYTD([Web Sales Amount],'Order Date'[RealDate]))
+
+
+Web Sales Amount SPLY = IF(ISBLANK([Web Sales Amount]),BLANK(),
+	CALCULATE([Web Sales Amount],SAMEPERIODLASTYEAR('Order Date'[RealDate])))
+
+Web Sales Change YonY = IF(ISBLANK([Web Sales Amount]),BLANK(),[Web Sales Amount] - 
+	[Web Sales Amount SPLY])
+
+Web Sales Change MonM = IF(ISBLANK([Web Sales Amount]),BLANK(),[Web Sales Amount] - 
+	CALCULATE([Web Sales Amount],PARALLELPERIOD('Order Date'[RealDate],-1,MONTH)))
+
+Web Sales %Change YonY = IF(ISBLANK([Web Sales Amount]) || 
+	ISBLANK([Web Sales Amount SPLY]),
+	BLANK(),DIVIDE([Web Sales Amount],[Web Sales Amount SPLY],blank())-1)
+
